@@ -1,0 +1,70 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Crademaster withdraws
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Withdraw Requests</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deposit</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Requested At</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completed At</th>
+                      <th class="text-secondary opacity-7"></th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for withdraw in withdraws %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'withdraw_detail' withdraw.id %}"><span class="text-info text-xs font-weight-bold">{{ withdraw.user }}</span></a>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.user.get_usdt_balance }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.amount }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{ withdraw.address }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.status }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.requested_at }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.completed_at|default_if_none:"" }}</span>
+                            </td>
+                            <td class="align-middle">
+                              <a href="{% url 'withdraw_approve' withdraw.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="approve">Approve</a>
+                            </td>
+                            <td>
+                              <a href="{% url 'withdraw_detail' withdraw.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Detail">Detail</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

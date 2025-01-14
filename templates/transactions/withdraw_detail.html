@@ -1,0 +1,37 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Crademaster withdraw
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mt-4">
+      <div class="card">
+        <div class="card-header pb-0 px-3">
+          <h6 class="mb-0">Withdraw request from {{ withdraw.user.email }}</h6>
+        </div>
+        <div class="card-body pt-4 p-3">
+          <ul class="list-group">
+            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+              <div class="d-flex flex-column">
+                <h6 class="mb-3 text-sm">{{ withdraw.user.email }}</h6>
+                <span class="mb-2 text-xs">Deposit: <span class="text-dark font-weight-bold ms-sm-2">{{ withdraw.user.get_usdt_balance }} USDT</span></span>
+                <span class="mb-2 text-xs">Amount: <span class="text-dark font-weight-bold ms-sm-2">{{ withdraw.amount }} USDT</span></span>
+                <span class="mb-2 text-xs">Address: <span class="text-dark ms-sm-2 font-weight-bold">{{ withdraw.address }}</span></span>
+                <span class="mb-2 text-xs">Status: <span class="text-dark ms-sm-2 font-weight-bold">{{ withdraw.status }}</span></span>
+                <span class="mb-2 text-xs">Requested At: <span class="text-dark ms-sm-2 font-weight-bold">{{ withdraw.requested_at }}</span></span>
+                <span class="mb-2 text-xs">Completed At: <span class="text-dark ms-sm-2 font-weight-bold">{{ withdraw.completed_at|default_if_none:"" }}</span></span>
+              </div>
+              <div class="ms-auto text-end">
+                <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="{% url 'withdraw_approve' withdraw.id %}"><i class="far fa-trash-alt me-2"></i>Approve</a>
+                <a class="btn btn-link text-dark px-3 mb-0" href="{% url 'withdraw_delete' withdraw.id %}"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Delete</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

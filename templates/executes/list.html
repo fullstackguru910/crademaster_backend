@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Crademaster withdraws
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Executes</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Platform Fee</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Duration</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit Percent</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Agent OS</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Http User Agent</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Http Referer</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Http X Forwarded For</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for execute in executes %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'user_update' execute.user.id %}"><span class="text-info text-xs font-weight-bold">{{ execute.user }}</span></a>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.get_profit }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                              <span class="text-secondary text-xs font-weight-bold">{{ execute.get_platform_fee_amount }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.get_duration|seconds_to_hms }}</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.amount }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.profit_percent }} %</span>
+                            </td>
+                            <td class="align-middle text-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{ execute.agent_os|default_if_none:"" }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.http_user_agent|default_if_none:"" }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.http_referer|default_if_none:"" }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.http_x_forwarded_for|default_if_none:"" }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ execute.created }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

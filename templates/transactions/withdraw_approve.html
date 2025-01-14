@@ -1,0 +1,28 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Crademaster withdraw approve
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Withdraw Approve</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="card-header">
+                <p>Are you sure to approve this withdraw?</p>
+                <form method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Approve</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

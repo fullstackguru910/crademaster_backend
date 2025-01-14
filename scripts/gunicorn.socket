@@ -1,0 +1,17 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=sapphire
+Group=www-data
+WorkingDirectory=/home/sapphire/crademaster_backend
+ExecStart=/home/sapphire/.local/share/virtualenvs/crademaster_backend-S0DTyu1L/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind 127.0.0.1:8000 \
+          --umask 007 \
+          crademaster.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+django-allauth = "*"
+dj-rest-auth = {extras = ["with_social"], version = "*"}
+python-dotenv = "*"
+django-anymail = "*"
+djangorestframework-simplejwt = "*"
+django-cors-headers = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
+tronpy = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"

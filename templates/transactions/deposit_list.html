@@ -1,0 +1,70 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Crademaster Deposits
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Deposits</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">USDT balance</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Requested At</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completed At</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for deposit in deposits %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'deposit_detail' deposit.id %}"><span class="text-info text-xs font-weight-bold">{{ deposit.user }}</span></a>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ deposit.user.get_usdt_balance }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ deposit.amount }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ deposit.status }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ deposit.requested_at }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ deposit.completed_at|default_if_none:"" }}</span>
+                            </td>
+                            {% if deposit.user.get_usdt_balance %}
+                              <td class="align-middle">
+                                  <a href="{% url 'deposit_approve' deposit.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                  Approve
+                                  </a>
+                              </td>
+                            {% else %}
+                              <td class="align-middle">
+                                <span class="text-info font-weight-bold text-xs">Approved</span>
+                              </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

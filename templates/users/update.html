@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Crademaster user
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>User</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="card-header">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                        <h6>Front</h6>
+                        <img src="{{ user.idfile_set.first.front }}" alt="{{ image.title }}">
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                        <h6>Back</h6>
+                        <img src="{{ user.idfile_set.first.back }}" alt="{{ image.title }}">
+                    </div>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Email: <span class="text-dark font-weight-normal ms-sm-2">{{ user.email }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">User Wallet: <span class="text-dark font-weight-normal ms-sm-2">{{ user.wallet|default_if_none:"" }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Crademaster Wallet: <span class="text-dark font-weight-normal ms-sm-2">{{ user.cm_wallet }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Crademaster Hex Address: <span class="text-dark font-weight-normal ms-sm-2">{{ user.cm_hex_address }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Referral Code: <span class="text-dark font-weight-normal ms-sm-2">{{ user.referral_code }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Referred By: <span class="text-dark font-weight-normal ms-sm-2">{{ user.referred_by|default_if_none:"" }}</span></span>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.profit_percent.id_for_label }}" class="form-label">Profit Percentage</label>
+                        {{ form.profit_percent|add_class:"form-control" }}
+                    </div>
+                    {% if form.errors %}
+                        <div class="text-danger">
+                        {% for field_name, error_list in form.errors.items %}
+                            {% for error in error_list %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Platform Fee: <span class="text-dark font-weight-normal ms-sm-2">{{ user.availability.fee_percentage }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Available Hours: <span class="text-dark font-weight-normal ms-sm-2">{{ user.availability.hours }}</span></span>
+                </div>
+                <div class="form-label">
+                    <span class="mb-2 text-xs">Total Platform Execute: <span class="text-dark font-weight-normal ms-sm-2">{{ user.calculate_total_execute|seconds_to_hms }}</span></span>
+                </div>
+              
+                  <!-- Submit Button -->
+                  <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Update</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}
+    Crademaster users
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Users</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">USDT</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TRX</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit Percent</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total Hours</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Wallet</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Referral Code</th>
+                      <th class="text-secondary opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in users %}
+                        <tr>
+                          <td>
+                              <a href="{% url 'user_update' user.id %}"><span class="text-info text-xs font-weight-bold">{{ user.email }}</span></a>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_usdt_balance }}</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_tron_balance }}</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.profit_percent }} %</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.calculate_total_execute|seconds_to_hms }}</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                              <span class="text-secondary text-xs font-weight-bold">{{ user.cm_wallet }}</span>
+                          </td>
+                          <td class="align-middle text-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{ user.referral_code }}</span>
+                          </td>
+                          <td class="align-middle">
+                            <a href="{% url 'user_update' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit User">
+                            Edit
+                            </a>
+                          </td>
+                          <td class="align-middle text-center">
+                            <a href="{% url 'execute_list' user.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit User">
+                            Executes
+                            </a>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
