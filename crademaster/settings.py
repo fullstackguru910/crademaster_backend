@@ -202,6 +202,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 SITE_ID = 1
 
+TIME_ZONE = 'Asia/Seoul'
+USE_TZ = True
+
 ACCOUNT_ADAPTER = 'authentication.adapter.CustomAccountAdapter'
 
 ACCOUNT_FORMS = {
@@ -259,3 +262,8 @@ CORS_ALLOW_METHODS = [
 CSRF_COOKIE_NAME = "csrftoken"
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
+
+# USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"   # mainnet
+USDT_CONTRACT = "TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf"
+
+VAULT_CONTRACT = "TPKu8ivMbkZNxQZPNM7s3WZjTv5iCwVrtT"

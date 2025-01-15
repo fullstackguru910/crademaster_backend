@@ -1,18 +1,91 @@
 from tronpy import Tron
+from tronpy.providers import HTTPProvider
 from tronpy.keys import PrivateKey
+from tronpy.exceptions import AddressNotFound
+
+from django.conf import settings
 
 
-tron = Tron(network='nile')
+class TronTransaction:
+    def __init__(self):
+        self.tron = Tron(network='nile')
+        # self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
+        self.usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
+        self.vault_contract = self.tron.get_contract(settings.VAULT_CONTRACT)
 
-def trx_transfer_usdt(sender, private_key, recipient, amount):
-    tron_key = PrivateKey(bytes.fromhex(private_key))
-    usdt_contract = tron.get_contract("TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf")
-    txn = (
-        usdt_contract.functions.transfer(recipient, int(amount * 1000000))
-        .with_owner(sender)
-        .fee_limit(100_000_000)
-        .build()
-        .sign(tron_key)
-    )
-    result = txn.broadcast()
-    return result
+    def generate_address(self):
+        return self.tron.generate_address()
+
+    def get_tron_balance(self, address):
+        try:
+            balance = self.tron.get_account_balance(address)
+        except AddressNotFound:
+            balance = 0
+        return balance
+    
+    def get_usdt_balance(self, address):
+        try:
+            balance = self.usdt_contract.functions.balanceOf(address)
+        except AddressNotFound:
+            balance = 0
+        return balance / (10 ** 6)
+    
+    def transfer_usdt(self, sender, private_key, recipient, amount):
+        tron_key = PrivateKey(bytes.fromhex(private_key))
+        usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
+        
+        txn = (
+            usdt_contract.functions.transfer(recipient, int(amount * 1000000))
+                .with_owner(sender)
+                .fee_limit(100_000_000)
+                .build()
+                .sign(tron_key)
+        )
+        
+        result = txn.broadcast()
+        return result
+    
+    def transfer_tron(self, sender, private_key, recipient, amount):
+        tron_key = PrivateKey(bytes.fromhex(private_key))
+        amount_in_sun = int(amount * 1_000_000)
+        
+        txn = (
+            self.tron.trx.transfer(sender, recipient, amount_in_sun)
+                .with_owner(sender)
+                .fee_limit(100_000_000)
+                .build()
+                .sign(tron_key)
+        )
+        
+        result = txn.broadcast()
+        return result
+    
+    # def deposit_usdt(self, sender, private_key, amount):
+    #     tron_key = PrivateKey(bytes.fromhex(private_key))
+        
+    #     txn = (
+    #         # self.vault_contract.functions.deposit(int(amount * 1000000))
+    #         self.vault_contract.functions.deposit(int(amount))
+    #             .with_owner(sender)
+    #             .fee_limit(100_000_000)
+    #             .build()
+    #             .sign(tron_key)
+    #     )
+        
+    #     result = txn.broadcast()
+    #     return result
+    
+    # def withdraw_usdt(self, sender, private_key, receiver, amount):
+    #     tron_key = PrivateKey(bytes.fromhex(private_key))
+        
+    #     txn = (
+    #         # self.vault_contract.functions.deposit(receiver, int(amount * 1000000))
+    #         self.vault_contract.functions.withdraw(receiver, int(amount))
+    #             .with_owner(sender)
+    #             .fee_limit(100_000_000)
+    #             .build()
+    #             .sign(tron_key)
+    #     )
+        
+    #     result = txn.broadcast()
+    #     return result

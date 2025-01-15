@@ -3,27 +3,22 @@ import uuid
 
 from datetime import datetime
 
-from tronpy import Tron
-from tronpy.providers import HTTPProvider
-from tronpy.exceptions import AddressNotFound
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Sum, Q
+from django.db.models import Sum
 from django.utils import timezone
 from django.utils.timezone import localtime, now
 from django.utils.translation import gettext_lazy as _
 
 from .managers import CustomUserManager
 
-from fees.models import Fee, RoyaltyFee
+from fees.models import Fee
 from fees.serializers import FeeSerializer
 
-# tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
-tron = Tron(network='nile')
+from transactions.handler import TronTransaction
 
-# USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
-USDT_CONTRACT_ADDRESS = "TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf"
+tron = TronTransaction()
+
 
 class CustomUser(AbstractUser):
     username = None
@@ -91,23 +86,11 @@ class CustomUser(AbstractUser):
 
     @property
     def get_tron_balance(self):
-        try:
-            # balance = tron.get_account_balance("THAnMs85N6mcNbKuUbAX826eymbmB7uQs2")
-            balance = tron.get_account_balance(self.cm_wallet)
-        except AddressNotFound:
-            balance = 0
-        return balance
+        return tron.get_tron_balance(self.cm_wallet)
 
     @property
     def get_usdt_balance(self):
-        try:
-            contract = tron.get_contract(USDT_CONTRACT_ADDRESS)
-            # balance = contract.functions.balanceOf("THAnMs85N6mcNbKuUbAX826eymbmB7uQs2")
-            balance = contract.functions.balanceOf(self.cm_wallet)
-            balance_in_usdt = balance / (10 ** 6)
-        except AddressNotFound:
-            balance_in_usdt = 0
-        return balance_in_usdt
+        return tron.get_usdt_balance(self.cm_wallet)
 
     @property
     def availability(self):

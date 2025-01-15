@@ -6,7 +6,7 @@ class DepositSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['user', 'amount', 'transaction_type', 'status']
+        fields = ['user', 'amount', 'transaction_type', 'status', 'description', 'completed_at']
 
     def validate(self, data):
         # user = self.context['request'].user

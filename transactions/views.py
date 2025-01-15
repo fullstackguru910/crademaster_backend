@@ -7,15 +7,18 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 
 from rest_framework import generics
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 
 from authentication.mixins import StaffRequiredMixin
+
 from fees.models import RoyaltyFee
 
 from .models import Transaction
 from .serializers import DepositSerializer, WithdrawSerializer
-from .handler import trx_transfer_usdt
+from .handler import TronTransaction
+
+tron = TronTransaction()
+
 
 class DepositListView(StaffRequiredMixin, ListView):
     model = Transaction
@@ -33,35 +36,35 @@ class DepositDetailView(StaffRequiredMixin, DetailView):
     context_object_name = 'deposit'
 
 
-class DepositApproveView(StaffRequiredMixin, UpdateView):
-    model = Transaction
-    fields = []
-    template_name = 'transactions/deposit_approve.html'
-    context_object_name = 'deposit'
-    success_url = reverse_lazy('deposit_list')
+# class DepositApproveView(StaffRequiredMixin, UpdateView):
+#     model = Transaction
+#     fields = []
+#     template_name = 'transactions/deposit_approve.html'
+#     context_object_name = 'deposit'
+#     success_url = reverse_lazy('deposit_list')
 
-    def get_object(self):
-        return Transaction.objects.get(id=self.kwargs['pk'])
+#     def get_object(self):
+#         return Transaction.objects.get(id=self.kwargs['pk'])
 
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        try:
-            tx = trx_transfer_usdt(
-                instance.user.cm_wallet,
-                instance.user.cm_private_key,
-                self.request.user.cm_wallet,
-                instance.amount
-            )
-            instance.completed_at = timezone.now()
-            instance.status = 'COMPLETED'
-            instance.description = tx.get('result')
-        except Exception as e:
-            instance.completed_at = timezone.now()
-            instance.status = 'FAILED'
-            instance.description = e
-        instance.save()
+#     def form_valid(self, form):
+#         instance = form.save(commit=False)
+#         try:
+#             tx = tron.transfer_usdt(
+#                 instance.user.cm_wallet,
+#                 instance.user.cm_private_key,
+#                 self.request.user.cm_wallet,
+#                 instance.amount
+#             )
+#             instance.completed_at = timezone.now()
+#             instance.status = 'COMPLETED'
+#             instance.description = tx.get('txid')
+#         except Exception as e:
+#             instance.completed_at = timezone.now()
+#             instance.status = 'FAILED'
+#             instance.description = e
+#         instance.save()
 
-        return super().form_valid(form)
+#         return super().form_valid(form)
 
 
 class WithdrawListView(StaffRequiredMixin, ListView):
@@ -100,12 +103,15 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
         instance = form.save(commit=False)
         instance.status = 'COMPLETED'
 
-        tx = trx_transfer_usdt(
+        tx = tron.transfer_usdt(
             instance.user.cm_wallet,
             instance.user.cm_private_key,
             self.request.user.cm_wallet,
             instance.amount
         )
+        instance.completed_at = timezone.now()
+        instance.status = 'COMPLETED'
+        instance.description = tx.get('txid')
 
         if instance.royalty:
             royalty_fee = RoyaltyFee.get_fee_for_balance(instance.user.get_deposit_balance)
@@ -133,7 +139,6 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
 #     def perform_create(self, serializer):
 #         try:
 #             user = self.request.user
-#             trx_transfer_usdt()
 #             serializer.save(user=user, transaction_type='Deposit')
 #         except Exception as e:
 #             raise ValidationError(f"Transaction failed: {str(e)}")

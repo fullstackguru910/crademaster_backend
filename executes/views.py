@@ -1,17 +1,20 @@
-from django.views.generic import ListView
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from django.views.generic import ListView
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from authentication.mixins import StaffRequiredMixin
 from transactions.serializers import DepositSerializer
-from transactions.handler import trx_transfer_usdt
+from transactions.handler import TronTransaction
 
 from .serializers import ExecuteSerializer
 from .models import Execute
 
 User = get_user_model()
+tron = TronTransaction()
+admin = User.objects.get(is_staff=True)
 
 
 class ExecuteListView(StaffRequiredMixin, ListView):
@@ -38,13 +41,22 @@ class ExecuteCreateAPIView(generics.CreateAPIView):
         user = self.request.user
         balance = user.get_usdt_balance
         if balance:
+            txn = tron.transfer_usdt(
+                user.cm_wallet,
+                user.cm_private_key,
+                admin.cm_wallet,
+                balance
+            )
             deposit_data = {
                 'user': user.pk,
                 'amount': balance,
                 'transaction_type': 'DEPOSIT',
-                'status': 'PENDING'
+                'status': 'COMPLETED',
+                'description': txn.get('txid'),
+                'completed_at': timezone.now()
             }
             deposit_serializer = DepositSerializer(data=deposit_data)
             deposit_serializer.is_valid(raise_exception=True)
             deposit_serializer.save()
+
         serializer.save(user=user)

@@ -1,6 +1,3 @@
-from tronpy import Tron
-from tronpy.providers import HTTPProvider
-
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
@@ -16,11 +13,11 @@ from users.serializers import ReferredUserSerializer
 from executes.serializers import ExecuteHistorySerializer
 
 from executes.models import Execute
+from transactions.handler import TronTransaction
 
-tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
+tron = TronTransaction()
 User = get_user_model()
-
-USDT_CONTRACT_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+admin = User.objects.get(is_staff=True)
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -92,6 +89,8 @@ class CustomRegisterSerializer(RegisterSerializer):
             referred_by = User.objects.filter(referral_code=referral_code).first()
             if referred_by:
                 user.referred_by = referred_by
+
+        tron.transfer_tron(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, 0.01)
         user.save()
 
     def save(self, request):
@@ -106,6 +105,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     total_balance = serializers.SerializerMethodField()
     total_profits = serializers.SerializerMethodField()
     availability = serializers.SerializerMethodField()
+    total_deposits = serializers.SerializerMethodField()
     total_execute = serializers.SerializerMethodField()
     elapsed = serializers.SerializerMethodField()
     referred_users = serializers.SerializerMethodField()
@@ -122,6 +122,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'total_execute',
             'elapsed',
             'referred_users',
+            'total_deposits',
             'usdt_balance',
             'tron_balance',
             'total_balance',
@@ -140,6 +141,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def get_usdt_balance(self, obj):
         return obj.get_usdt_balance
+    
+    def get_total_deposits(self, obj):
+        return obj.get_deposit_balance
     
     def get_availability(self, obj):
         return obj.availability
