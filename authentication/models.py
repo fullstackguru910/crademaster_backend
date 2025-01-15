@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import localtime, now
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
@@ -22,7 +22,7 @@ class EmailVerificationCode(models.Model):
 
     @property
     def is_expired(self):
-        return timezone.now() > self.created_at + timedelta(hours=1)
+        return localtime(now()) > self.created_at + timedelta(hours=1)
 
     def __str__(self):
         return f"{self.email_address.email} - {self.code}"

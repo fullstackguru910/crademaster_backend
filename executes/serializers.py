@@ -1,4 +1,4 @@
-from django.utils.timezone import now
+from django.utils.timezone import now, localtime
 from rest_framework import serializers
 
 from fees.models import Fee
@@ -17,7 +17,7 @@ class ExecuteSerializer(serializers.ModelSerializer):
         Validate that the user can create a Execute record only once per day.
         """
         user = self.context['request'].user
-        today = now().date()
+        today = localtime(now()).date()
 
         if user.get_deposit_balance < 50:
             raise serializers.ValidationError("Your USDT balance is insufficient. Please ensure your balance is greater than 50 USDT to proceed.")

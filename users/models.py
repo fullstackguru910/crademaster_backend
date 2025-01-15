@@ -1,12 +1,9 @@
 import math
 import uuid
 
-from datetime import datetime
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
-from django.utils import timezone
 from django.utils.timezone import localtime, now
 from django.utils.translation import gettext_lazy as _
 
@@ -115,9 +112,9 @@ class CustomUser(AbstractUser):
     def calculate_elapsed(self):
         execute = self.execute_set.first()
 
-        if not execute or execute.created.date() != datetime.today().date():
+        if not execute or execute.created.date() != localtime(now()).date():
             return 0
-        elapsed = (timezone.now() - execute.created).total_seconds()
+        elapsed = (localtime(now()) - execute.created).total_seconds()
         return min(elapsed, 3600 * self.availability.get("hours"))
 
 

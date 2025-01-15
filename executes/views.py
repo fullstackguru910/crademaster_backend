@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.utils.timezone import localtime, now
 from django.views.generic import ListView
 
 from rest_framework import generics
@@ -53,7 +53,7 @@ class ExecuteCreateAPIView(generics.CreateAPIView):
                 'transaction_type': 'DEPOSIT',
                 'status': 'COMPLETED',
                 'description': txn.get('txid'),
-                'completed_at': timezone.now()
+                'completed_at': localtime(now())
             }
             deposit_serializer = DepositSerializer(data=deposit_data)
             deposit_serializer.is_valid(raise_exception=True)

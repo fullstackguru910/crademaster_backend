@@ -172,7 +172,7 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -201,9 +201,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 SITE_ID = 1
-
-TIME_ZONE = 'Asia/Seoul'
-USE_TZ = True
 
 ACCOUNT_ADAPTER = 'authentication.adapter.CustomAccountAdapter'
 

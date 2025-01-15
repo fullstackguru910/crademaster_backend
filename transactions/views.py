@@ -4,7 +4,7 @@ from django.views.generic import (
     ListView, DetailView, DeleteView, UpdateView
 )
 from django.urls import reverse_lazy
-from django.utils import timezone
+from django.utils.timezone import localtime, now
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -55,11 +55,11 @@ class DepositDetailView(StaffRequiredMixin, DetailView):
 #                 self.request.user.cm_wallet,
 #                 instance.amount
 #             )
-#             instance.completed_at = timezone.now()
+#             instance.completed_at = localtime(now())
 #             instance.status = 'COMPLETED'
 #             instance.description = tx.get('txid')
 #         except Exception as e:
-#             instance.completed_at = timezone.now()
+#             instance.completed_at = localtime(now())
 #             instance.status = 'FAILED'
 #             instance.description = e
 #         instance.save()
@@ -109,7 +109,7 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
             self.request.user.cm_wallet,
             instance.amount
         )
-        instance.completed_at = timezone.now()
+        instance.completed_at = localtime(now())
         instance.status = 'COMPLETED'
         instance.description = tx.get('txid')
 
