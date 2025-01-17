@@ -104,9 +104,9 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
         instance.status = 'COMPLETED'
 
         tx = tron.transfer_usdt(
-            instance.user.cm_wallet,
-            instance.user.cm_private_key,
             self.request.user.cm_wallet,
+            self.request.user.cm_private_key,
+            instance.user.cm_wallet,
             instance.amount
         )
         instance.completed_at = localtime(now())

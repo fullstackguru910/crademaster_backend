@@ -28,6 +28,6 @@ class WithdrawSerializer(serializers.ModelSerializer):
         if data['amount'] > user.get_balance:
             raise serializers.ValidationError("Exceed amount.")
 
-        if data['address'] == user.cm_address:
+        if data['address'] == user.cm_wallet:
             raise serializers.ValidationError("Withdrawal address shouldn't be the crademaster wallet.")
         return data
