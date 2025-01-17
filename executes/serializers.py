@@ -29,7 +29,7 @@ class ExecuteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = validated_data.get('user')
-        amount = user.get_deposit_balance
+        amount = user.get_balance
 
         applicable_fee = Fee.objects.filter(min_investment__lte=amount, max_investment__gte=amount).first()
 
