@@ -91,7 +91,7 @@ class CustomUser(AbstractUser):
 
     @property
     def availability(self):
-        balance = self.get_deposit_balance
+        balance = self.get_balance
         try:
             fee = Fee.get_fee_for_balance(balance)
             if fee:
