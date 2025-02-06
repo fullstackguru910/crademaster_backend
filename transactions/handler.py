@@ -8,10 +8,9 @@ from django.conf import settings
 
 class TronTransaction:
     def __init__(self):
-        self.tron = Tron(network='nile')
-        # self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
+        # self.tron = Tron(network='nile')
+        self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
         self.usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
-        self.vault_contract = self.tron.get_contract(settings.VAULT_CONTRACT)
 
     def generate_address(self):
         return self.tron.generate_address()
@@ -59,33 +58,3 @@ class TronTransaction:
         
         result = txn.broadcast()
         return result
-    
-    # def deposit_usdt(self, sender, private_key, amount):
-    #     tron_key = PrivateKey(bytes.fromhex(private_key))
-        
-    #     txn = (
-    #         # self.vault_contract.functions.deposit(int(amount * 1000000))
-    #         self.vault_contract.functions.deposit(int(amount))
-    #             .with_owner(sender)
-    #             .fee_limit(100_000_000)
-    #             .build()
-    #             .sign(tron_key)
-    #     )
-        
-    #     result = txn.broadcast()
-    #     return result
-    
-    # def withdraw_usdt(self, sender, private_key, receiver, amount):
-    #     tron_key = PrivateKey(bytes.fromhex(private_key))
-        
-    #     txn = (
-    #         # self.vault_contract.functions.deposit(receiver, int(amount * 1000000))
-    #         self.vault_contract.functions.withdraw(receiver, int(amount))
-    #             .with_owner(sender)
-    #             .fee_limit(100_000_000)
-    #             .build()
-    #             .sign(tron_key)
-    #     )
-        
-    #     result = txn.broadcast()
-    #     return result

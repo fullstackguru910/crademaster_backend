@@ -8,4 +8,5 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('execute/', include('executes.urls')),
     path('transaction/', include('transactions.urls')),
+    path('event/', include('events.urls')),
 ]

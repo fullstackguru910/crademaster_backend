@@ -11,8 +11,10 @@ from rest_framework import serializers
 
 from users.serializers import ReferredUserSerializer
 from executes.serializers import ExecuteHistorySerializer
+from events.serializers import EventSerializer
 
 from executes.models import Execute
+from events.models import Event
 from transactions.handler import TronTransaction
 
 tron = TronTransaction()
@@ -47,12 +49,19 @@ class CustomRegisterSerializer(RegisterSerializer):
         allow_blank=True
     )
 
+    event = serializers.CharField(
+        max_length=100,
+        required=False,
+        allow_blank=True
+    )
+
     def get_cleaned_data(self):
         """
-        Extend cleaned data to include referral.
+        Extend cleaned data to include referral & event.
         """
         cleaned_data = super().get_cleaned_data()
         cleaned_data['referral'] = self.validated_data.get('referral', '')
+        cleaned_data['event'] = self.validated_data.get('event', '')
         return cleaned_data
 
     def validate_email(self, email):
@@ -90,6 +99,13 @@ class CustomRegisterSerializer(RegisterSerializer):
             if referred_by:
                 user.referred_by = referred_by
 
+        event_code = self.cleaned_data.get('event')
+        if event_code:
+            event = Event.objects.filter(code=event_code).first()
+            if event:
+                event.users.add(user)
+                tron.transfer_usdt(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, int(event.amount))
+
         tron.transfer_tron(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, 0.01)
         user.save()
 
@@ -110,6 +126,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     elapsed = serializers.SerializerMethodField()
     referred_users = serializers.SerializerMethodField()
     executes = serializers.SerializerMethodField()
+    events = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -128,6 +145,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'total_balance',
             'total_profits',
             'executes',
+            'events',
         ]
 
     def get_total_balance(self, obj):
@@ -161,3 +179,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_executes(self, obj):
         executes = Execute.objects.filter(user=obj)
         return ExecuteHistorySerializer(executes, many=True).data
+    
+    def get_events(self, obj):
+        events = obj.events.all()
+        return EventSerializer(events, many=True).data

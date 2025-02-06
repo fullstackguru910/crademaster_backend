@@ -6,12 +6,13 @@ from django.db.models.functions import TruncMonth
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 
+from authentication.mixins import StaffRequiredMixin
 from fees.models import Fee
 
 User = get_user_model()
 
 
-class DashboardView(TemplateView):
+class DashboardView(StaffRequiredMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
