@@ -12,6 +12,8 @@ from .managers import CustomUserManager
 from fees.models import Fee
 from fees.serializers import FeeSerializer
 
+from events.models import Event
+
 from transactions.handler import TronTransaction
 
 tron = TronTransaction()
@@ -32,6 +34,8 @@ class CustomUser(AbstractUser):
 
     referral_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='referrals')
+
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

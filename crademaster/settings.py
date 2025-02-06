@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'anymail',
 
     'authentication',
+    'events',
     'users',
     'transactions',
     'fees',
