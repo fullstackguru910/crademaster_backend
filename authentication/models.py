@@ -18,11 +18,12 @@ class EmailVerificationCode(models.Model):
     )
 
     code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     @property
     def is_expired(self):
-        return localtime(now()) > self.created_at + timedelta(hours=1)
+        return localtime(now()) > self.updated + timedelta(hours=1)
 
     def __str__(self):
         return f"{self.email_address.email} - {self.code}"
