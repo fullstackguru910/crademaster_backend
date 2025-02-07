@@ -19,6 +19,7 @@ class DashboardView(StaffRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['fees'] = Fee.objects.all()
         context['users'] = User.objects.filter(emailaddress__verified=True).distinct()
+        context['admin'] = User.objects.get(is_staff=True)
         monthly_users = (
             User.objects.annotate(month=TruncMonth('date_joined'))
             .values('month')

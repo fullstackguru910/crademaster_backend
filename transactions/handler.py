@@ -8,8 +8,9 @@ from django.conf import settings
 
 class TronTransaction:
     def __init__(self):
-        # self.tron = Tron(network='nile')
-        self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
+        # self.tron = Tron(network='mainnet')
+        self.tron = Tron(network='nile')
+        # self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
         self.usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
 
     def generate_address(self):
@@ -21,33 +22,34 @@ class TronTransaction:
         except AddressNotFound:
             balance = 0
         return balance
-    
+
     def get_usdt_balance(self, address):
         try:
             balance = self.usdt_contract.functions.balanceOf(address)
         except AddressNotFound:
             balance = 0
         return balance / (10 ** 6)
-    
+
     def transfer_usdt(self, sender, private_key, recipient, amount):
         tron_key = PrivateKey(bytes.fromhex(private_key))
         usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
-        
+
         txn = (
             usdt_contract.functions.transfer(recipient, int(amount * 1000000))
                 .with_owner(sender)
-                .fee_limit(100_000_000)
+                .fee_limit(10_000_000)
                 .build()
                 .sign(tron_key)
         )
-        
-        result = txn.broadcast()
-        return result
-    
+
+        tx_hash = txn.broadcast().wait()
+        tx_info = self.tron.get_transaction_info(tx_hash['id'])
+        return tx_hash
+
     def transfer_tron(self, sender, private_key, recipient, amount):
         tron_key = PrivateKey(bytes.fromhex(private_key))
         amount_in_sun = int(amount * 1_000_000)
-        
+
         txn = (
             self.tron.trx.transfer(sender, recipient, amount_in_sun)
                 .with_owner(sender)
@@ -55,6 +57,10 @@ class TronTransaction:
                 .build()
                 .sign(tron_key)
         )
-        
-        result = txn.broadcast()
-        return result
+
+        tx_hash = txn.broadcast().wait()
+        return tx_hash
+
+    def get_account(self, address):
+        account_info = self.tron.get_account(address)
+        return account_info
