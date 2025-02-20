@@ -14,7 +14,6 @@ from .models import Execute
 
 User = get_user_model()
 tron = TronTransaction()
-admin = User.objects.get(is_staff=True)
 
 
 class ExecuteListView(StaffRequiredMixin, ListView):
@@ -39,6 +38,7 @@ class ExecuteCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
+        admin = User.objects.get(is_staff=True)
         balance = user.get_usdt_balance
         if balance:
             txn = tron.transfer_usdt(

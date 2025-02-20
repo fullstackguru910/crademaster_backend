@@ -19,7 +19,6 @@ from transactions.handler import TronTransaction
 
 tron = TronTransaction()
 User = get_user_model()
-admin = User.objects.get(is_staff=True)
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -87,6 +86,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         """
         Custom logic for referral code handling.
         """
+        admin = User.objects.get(is_staff=True)
         tron_account = tron.generate_address()
         user.cm_wallet = tron_account.get('base58check_address')
         user.cm_private_key = tron_account.get('private_key')
