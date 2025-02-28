@@ -1,5 +1,6 @@
 from tronpy import Tron
 from django.db.models import Sum
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import Transaction
@@ -39,8 +40,11 @@ class WithdrawSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Exceed amount.")
 
         if data['address'] == user.cm_wallet:
-            raise serializers.ValidationError("Withdrawal address shouldn't be the crademaster wallet.")
-        
+            raise serializers.ValidationError("Withdrawal address shouldn't be the crademaster wallet.")\
+            
+        if user.get_tron_balance < settings.MINIMUM_TRON_AMOUNT:
+            raise serializers.ValidationError("Your Tron balance is insufficient. Please ensure your balance is greater than 20 TRX to proceed.")
+
         invests = user.events.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
         if data['amount'] > user.get_balance - float(invests):

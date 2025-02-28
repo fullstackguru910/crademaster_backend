@@ -9,8 +9,8 @@ from django.conf import settings
 class TronTransaction:
     def __init__(self):
         # self.tron = Tron(network='mainnet')
-        self.tron = Tron(network='nile')
-        # self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
+        # self.tron = Tron(network='nile')
+        self.tron = Tron(provider=HTTPProvider(api_key="679bbd65-8f55-4427-86a2-e4a4250be584"))
         self.usdt_contract = self.tron.get_contract(settings.USDT_CONTRACT)
 
     def generate_address(self):
@@ -59,7 +59,8 @@ class TronTransaction:
         )
 
         tx_hash = txn.broadcast().wait()
-        return tx_hash
+        tx_info = self.tron.get_transaction_info(tx_hash['id'])
+        return tx_info
 
     def get_account(self, address):
         account_info = self.tron.get_account(address)

@@ -61,8 +61,9 @@ class CustomUser(AbstractUser):
         ).aggregate(total_deposit_amount=Sum('amount'))
 
         total_amount = total_deposit['total_deposit_amount'] or 0
-        balance = self.get_usdt_balance
-        return float(total_amount) + float(balance) - float(self.get_withdrawal_balance)
+        usdt_balance = self.get_usdt_balance
+        event = self.events.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+        return float(total_amount) + float(usdt_balance) - float(self.get_withdrawal_balance) + float(event)
 
     @property
     def get_royalty_balance(self):

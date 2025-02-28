@@ -33,3 +33,21 @@ class Transaction(models.Model):
         if self.transaction_type == 'WITHDRAWAL' and not self.address:
             raise ValueError("Wallet address is required for withdrawals.")
         super().save(*args, **kwargs)
+
+
+class TronDeposit(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', _('Pending')),
+        ('COMPLETED', _('Completed')),
+        ('CANCELLED', _('Cancelled')),
+        ('FAILED', _('Failed')),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tron_deposits')
+    amount = models.DecimalField(_("amount"), max_digits=10, decimal_places=2)
+    status = models.CharField(_("status"), max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    requested_at = models.DateTimeField(_("requested at"), auto_now_add=True)
+    completed_at = models.DateTimeField(_("completed at"), null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.amount}"

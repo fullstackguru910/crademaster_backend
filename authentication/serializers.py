@@ -86,7 +86,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         """
         Custom logic for referral code handling.
         """
-        admin = User.objects.get(is_staff=True)
+        # admin = User.objects.get(is_staff=True)
         tron_account = tron.generate_address()
         user.cm_wallet = tron_account.get('base58check_address')
         user.cm_private_key = tron_account.get('private_key')
@@ -104,9 +104,9 @@ class CustomRegisterSerializer(RegisterSerializer):
             event = Event.objects.filter(code=event_code).first()
             if event:
                 event.users.add(user)
-                tron.transfer_usdt(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, int(event.amount))
+        #         tron.transfer_usdt(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, int(event.amount))
 
-        tron.transfer_tron(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, 0.01)
+        # tron.transfer_tron(admin.cm_wallet, admin.cm_private_key, user.cm_wallet, 0.01)
         user.save()
 
     def save(self, request):

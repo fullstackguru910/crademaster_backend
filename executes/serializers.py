@@ -1,4 +1,5 @@
 from django.utils.timezone import now, localtime
+from django.conf import settings
 from rest_framework import serializers
 
 from fees.models import Fee
@@ -19,8 +20,11 @@ class ExecuteSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         today = localtime(now()).date()
 
-        if user.get_deposit_balance < 50:
-            raise serializers.ValidationError("Your USDT balance is insufficient. Please ensure your balance is greater than 50 USDT to proceed.")
+        if user.get_deposit_balance < settings.WITHDRAW_REQUIRED_USDT_AMOUNT:
+            raise serializers.ValidationError("Your USDT balance is insufficient. Please ensure your balance is greater than 100 USDT to proceed.")
+
+        if user.get_usdt_balance > 0 and user.get_tron_balance < settings.MINIMUM_TRON_AMOUNT:
+            raise serializers.ValidationError("Your Tron balance is insufficient. Please ensure your balance is greater than 20 TRX to proceed.")
 
         if Execute.objects.filter(user=user, created__date=today).exists():
             raise serializers.ValidationError("You can only activate the platform once per day.")

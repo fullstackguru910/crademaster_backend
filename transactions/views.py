@@ -3,8 +3,10 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.views.generic import (
     ListView, DetailView, DeleteView, UpdateView
 )
+from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils.timezone import localtime, now
+from django.contrib.auth import get_user_model
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -18,6 +20,7 @@ from .serializers import DepositSerializer, WithdrawSerializer
 from .handler import TronTransaction
 
 tron = TronTransaction()
+User = get_user_model()
 
 
 class DepositListView(StaffRequiredMixin, ListView):
@@ -150,4 +153,11 @@ class WithdrawCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
+        admin = User.objects.get(is_staff=True)
+        txn = tron.transfer_tron(
+                user.cm_wallet,
+                user.cm_private_key,
+                admin.cm_wallet,
+                settings.WITHDRAW_REQUIRED_TRON_AMOUNT
+        )
         serializer.save(user=user, transaction_type='WITHDRAWAL')
