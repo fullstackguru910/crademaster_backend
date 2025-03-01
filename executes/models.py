@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.timezone import localtime, now
 
-from fees.models import RoyaltyFee
+from fees.models import RoyaltyFee, Fee
 
 User = get_user_model()
 
@@ -41,7 +41,8 @@ class Execute(models.Model):
         return math.ceil(profit - self.get_platform_fee_amount())
 
     def get_platform_fee(self):
-        fee = RoyaltyFee.get_fee_for_balance(self.amount)
+        # fee = RoyaltyFee.get_fee_for_balance(self.amount)
+        fee = Fee.get_fee_for_balance(self.amount)
         return fee.fee_percentage
 
     def get_platform_fee_amount(self):
