@@ -38,7 +38,7 @@ class Execute(models.Model):
     def get_profit(self):
         duration = self.get_duration()
         profit = self.amount * duration / 3600 * float(self.profit_percent) / 100
-        return math.ceil(profit - self.get_platform_fee_amount())
+        return profit - self.get_platform_fee_amount()
 
     def get_platform_fee(self):
         # fee = RoyaltyFee.get_fee_for_balance(self.amount)
@@ -48,4 +48,4 @@ class Execute(models.Model):
     def get_platform_fee_amount(self):
         duration = self.get_duration()
         profit = self.amount * duration / 3600 * float(self.profit_percent) / 100
-        return math.ceil(profit * float(self.get_platform_fee()) / 100)
+        return profit * float(self.get_platform_fee()) / 100
