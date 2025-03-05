@@ -21,10 +21,10 @@ class ExecuteSerializer(serializers.ModelSerializer):
         today = localtime(now()).date()
 
         if user.get_deposit_balance < settings.WITHDRAW_REQUIRED_USDT_AMOUNT:
-            raise serializers.ValidationError("Your USDT balance is insufficient. Please ensure your balance is greater than 100 USDT to proceed.")
+            raise serializers.ValidationError(f"Your USDT balance is insufficient. Please ensure your balance is greater than {settings.WITHDRAW_REQUIRED_USDT_AMOUNT} USDT to proceed.")
 
         if user.get_usdt_balance > 0 and user.get_tron_balance < settings.MINIMUM_TRON_AMOUNT:
-            raise serializers.ValidationError("Your Tron balance is insufficient. Please ensure your balance is greater than 20 TRX to proceed.")
+            raise serializers.ValidationError(f"Your Tron balance is insufficient. Please ensure your balance is greater than {settings.MINIMUM_TRON_AMOUNT} TRX to proceed.")
 
         if Execute.objects.filter(user=user, created__date=today).exists():
             raise serializers.ValidationError("You can only activate the platform once per day.")

@@ -1,4 +1,6 @@
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect
+from django.conf import settings
 from dj_rest_auth.registration.views import RegisterView
 
 from rest_framework.permissions import AllowAny
@@ -41,7 +43,7 @@ class VerifyEmailCodeView(APIView):
 #     )
 
 
-# def password_reset_confirm_redirect(request, uidb64, token):
-#     return HttpResponseRedirect(
-#         f"{settings.PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL}{uidb64}/{token}/"
-#     )
+def password_reset_confirm_redirect(request, uidb64, token):
+    return HttpResponseRedirect(
+        f"{settings.PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL}{uidb64}/{token}/"
+    )
