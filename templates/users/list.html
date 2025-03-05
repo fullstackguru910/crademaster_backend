@@ -25,6 +25,7 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total Hours</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Wallet</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Referral Code</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Joined</th>
                       <th class="text-secondary opacity-7"></th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
                     </tr>
@@ -52,6 +53,9 @@
                           </td>
                           <td class="align-middle text-center">
                             <span class="text-secondary text-xs font-weight-bold">{{ user.referral_code }}</span>
+                          </td>
+                          <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.date_joined }}</span>
                           </td>
                           <td class="align-middle">
                             <a href="{% url 'user_update' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit User">
