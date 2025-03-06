@@ -149,6 +149,8 @@ REST_AUTH = {
     'USE_JWT': True,
     'TOKEN_MODEL': None,
     'USER_DETAILS_SERIALIZER': 'authentication.serializers.CustomUserSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'authentication.serializers.CustomPasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'authentication.serializers.CustomPasswordResetConfirmSerializer',
 }
 
 REST_FRAMEWORK = {
@@ -267,5 +269,3 @@ USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"   # mainnet
 MINIMUM_TRON_AMOUNT = 20
 WITHDRAW_REQUIRED_TRON_AMOUNT = 15
 WITHDRAW_REQUIRED_USDT_AMOUNT = 20
-
-PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = 'https://program.crademaster.com/password-reset/confirm/'

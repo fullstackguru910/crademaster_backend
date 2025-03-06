@@ -18,6 +18,8 @@ class EmailVerificationCode(models.Model):
     )
 
     code = models.CharField(max_length=6)
+    uid = models.CharField(max_length=10, blank=True, null=True)
+    token = models.CharField(max_length=100, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

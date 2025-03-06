@@ -1,13 +1,17 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import PasswordResetSerializer
 
 from allauth.account import app_settings as allauth_account_settings
 from allauth.account.adapter import get_adapter
 from allauth.socialaccount.models import EmailAddress
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from users.serializers import ReferredUserSerializer
 from executes.serializers import ExecuteHistorySerializer
@@ -15,6 +19,9 @@ from events.serializers import EventSerializer
 
 from executes.models import Execute
 from events.models import Event
+from authentication.models import EmailVerificationCode
+
+from authentication.forms import CustomResetPasswordForm
 from transactions.handler import TronTransaction
 
 tron = TronTransaction()
@@ -183,3 +190,52 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_events(self, obj):
         events = obj.events.all()
         return EventSerializer(events, many=True).data
+
+
+class CustomPasswordResetSerializer(PasswordResetSerializer):
+    password_reset_form_class = CustomResetPasswordForm
+
+
+class CustomPasswordResetConfirmSerializer(serializers.Serializer):
+    new_password1 = serializers.CharField(max_length=128)
+    new_password2 = serializers.CharField(max_length=128)
+    key = serializers.CharField()
+
+    set_password_form_class = SetPasswordForm
+
+    _errors = {}
+    user = None
+    set_password_form = None
+
+    def custom_validation(self, attrs):
+        pass
+
+    def validate(self, attrs):
+        from allauth.account.forms import default_token_generator
+        from allauth.account.utils import url_str_to_user_pk as uid_decoder
+        email_address = EmailVerificationCode.objects.get(code=attrs['key'])
+
+        attrs['uid'] = email_address.uid
+        attrs['token'] = email_address.token
+
+        try:
+            uid = force_str(uid_decoder(email_address.uid))
+            self.user = User._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise ValidationError({'uid': [_('Invalid value')]})
+
+        if not default_token_generator.check_token(self.user, attrs['token']):
+            raise ValidationError({'token': [_('Invalid value')]})
+
+        self.custom_validation(attrs)
+
+        self.set_password_form = self.set_password_form_class(
+            user=self.user, data=attrs,
+        )
+        if not self.set_password_form.is_valid():
+            raise serializers.ValidationError(self.set_password_form.errors)
+
+        return attrs
+
+    def save(self):
+        return self.set_password_form.save()

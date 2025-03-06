@@ -1,4 +1,4 @@
-from django.utils.crypto import get_random_string
+import secrets
 
 from allauth.account.adapter import DefaultAccountAdapter
 
@@ -27,4 +27,4 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
     def generate_verification_code(self):
         """Generate a unique verification code"""
-        return get_random_string(length=6, allowed_chars='0123456789')
+        return ''.join(secrets.choice('0123456789') for _ in range(6))

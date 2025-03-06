@@ -12,7 +12,6 @@ from dj_rest_auth.views import (
 from authentication.views import (
     CustomRegisterView,
     VerifyEmailCodeView,
-    password_reset_confirm_redirect
 )
 
 
@@ -34,7 +33,7 @@ urlpatterns = [
 
     path(
         "password/reset/confirm/<str:uidb64>/<str:token>/",
-        password_reset_confirm_redirect,
+        TemplateView.as_view(),
         name="password_reset_confirm",
     ),
 ]
