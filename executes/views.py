@@ -36,27 +36,27 @@ class ExecuteCreateAPIView(generics.CreateAPIView):
     serializer_class = ExecuteSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        admin = User.objects.get(is_staff=True)
-        balance = user.get_usdt_balance
-        if balance:
-            txn = tron.transfer_usdt(
-                user.cm_wallet,
-                user.cm_private_key,
-                admin.cm_wallet,
-                balance
-            )
-            deposit_data = {
-                'user': user.pk,
-                'amount': balance,
-                'transaction_type': 'DEPOSIT',
-                'status': 'COMPLETED',
-                'description': txn.get('txid'),
-                'completed_at': localtime(now())
-            }
-            deposit_serializer = DepositSerializer(data=deposit_data)
-            deposit_serializer.is_valid(raise_exception=True)
-            deposit_serializer.save()
+    # def perform_create(self, serializer):
+    #     user = self.request.user
+    #     admin = User.objects.get(is_staff=True)
+    #     balance = user.get_usdt_balance
+    #     if balance:
+    #         txn = tron.transfer_usdt(
+    #             user.cm_wallet,
+    #             user.cm_private_key,
+    #             admin.cm_wallet,
+    #             balance
+    #         )
+    #         deposit_data = {
+    #             'user': user.pk,
+    #             'amount': balance,
+    #             'transaction_type': 'DEPOSIT',
+    #             'status': 'COMPLETED',
+    #             'description': txn.get('txid'),
+    #             'completed_at': localtime(now())
+    #         }
+    #         deposit_serializer = DepositSerializer(data=deposit_data)
+    #         deposit_serializer.is_valid(raise_exception=True)
+    #         deposit_serializer.save()
 
-        serializer.save(user=user)
+    #     serializer.save(user=user)
