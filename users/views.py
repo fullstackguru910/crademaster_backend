@@ -1,3 +1,4 @@
+import asyncio
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView
 
@@ -10,28 +11,30 @@ from authentication.serializers import CustomUserSerializer
 from .models import CustomUser
 from .serializers import UploadedFilesSerializer
 
-from transactions.handler import TronTransaction
-
-tron = TronTransaction()
-
 
 class UserListView(StaffRequiredMixin, ListView):
     model = CustomUser
     template_name = 'users/list.html'
     context_object_name = 'users'
-    paginate_by = 5
+    # paginate_by = 5
 
-    def get_queryset(self):
+    async def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.exclude(is_staff=True)
-        sort_by = self.request.GET.get('sort_by', 'tron_balance')
-        
-        # Get the balances for each user and sort based on them
-        if sort_by == 'TRX':
-            queryset = sorted(queryset, key=lambda user: tron.get_tron_balance(user.cm_wallet), reverse=True)
-        elif sort_by == 'USDT':
-            queryset = sorted(queryset, key=lambda user: tron.get_usdt_balance(user.cm_wallet), reverse=True)
-        return queryset
+
+        users = list(queryset)
+        tasks = []
+
+        for user in users:
+            tasks.append(asyncio.create_task(self.fetch_balances(user)))
+
+        await asyncio.gather(*tasks)
+        print(users)
+        return users
+
+    async def fetch_balances(self, user):
+        user.get_tron_balance
+        user.get_usdt_balance
 
 
 class UserUpdateView(StaffRequiredMixin, UpdateView):
