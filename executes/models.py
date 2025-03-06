@@ -38,7 +38,7 @@ class Execute(models.Model):
     def get_profit(self):
         duration = self.get_duration()
         profit = self.amount * duration / 3600 * float(self.profit_percent) / 100
-        return profit - self.get_platform_fee_amount()
+        return round(profit - self.get_platform_fee_amount(), 2)
 
     def get_platform_fee(self):
         # fee = RoyaltyFee.get_fee_for_balance(self.amount)

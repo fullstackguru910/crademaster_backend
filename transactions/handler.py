@@ -21,14 +21,14 @@ class TronTransaction:
             balance = self.tron.get_account_balance(address)
         except AddressNotFound:
             balance = 0
-        return balance
+        return round(balance, 2)
 
     def get_usdt_balance(self, address):
         try:
             balance = self.usdt_contract.functions.balanceOf(address)
         except AddressNotFound:
             balance = 0
-        return balance / (10 ** 6)
+        return round(balance / (10 ** 6), 2)
 
     def transfer_usdt(self, sender, private_key, recipient, amount):
         tron_key = PrivateKey(bytes.fromhex(private_key))
