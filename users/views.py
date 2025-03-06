@@ -1,4 +1,3 @@
-import asyncio
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView
 
@@ -16,25 +15,11 @@ class UserListView(StaffRequiredMixin, ListView):
     model = CustomUser
     template_name = 'users/list.html'
     context_object_name = 'users'
-    # paginate_by = 5
+    paginate_by = 5
 
-    async def get_queryset(self):
+    def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.exclude(is_staff=True)
-
-        users = list(queryset)
-        tasks = []
-
-        for user in users:
-            tasks.append(asyncio.create_task(self.fetch_balances(user)))
-
-        await asyncio.gather(*tasks)
-        print(users)
-        return users
-
-    async def fetch_balances(self, user):
-        user.get_tron_balance
-        user.get_usdt_balance
+        return queryset.exclude(is_staff=True)
 
 
 class UserUpdateView(StaffRequiredMixin, UpdateView):
