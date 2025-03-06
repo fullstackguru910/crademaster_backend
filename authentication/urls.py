@@ -5,13 +5,10 @@ from dj_rest_auth.registration.views import (
     ResendEmailVerificationView,
 )
 
-from dj_rest_auth.views import (
-    PasswordResetConfirmView,
-)
-
 from authentication.views import (
     CustomRegisterView,
     VerifyEmailCodeView,
+    PasswordResetLookupView
 )
 
 
@@ -31,9 +28,5 @@ urlpatterns = [
         name='account_email_verification_sent',
     ),
 
-    path(
-        "password/reset/confirm/<str:uidb64>/<str:token>/",
-        TemplateView.as_view(),
-        name="password_reset_confirm",
-    ),
+    path('password/reset/lookup/<str:code>/', PasswordResetLookupView.as_view(), name='rest_password_reset_lookup'),
 ]

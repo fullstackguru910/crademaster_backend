@@ -196,46 +196,14 @@ class CustomPasswordResetSerializer(PasswordResetSerializer):
     password_reset_form_class = CustomResetPasswordForm
 
 
-class CustomPasswordResetConfirmSerializer(serializers.Serializer):
-    new_password1 = serializers.CharField(max_length=128)
-    new_password2 = serializers.CharField(max_length=128)
-    key = serializers.CharField()
+class EmailVerificationCodeSerializer(serializers.ModelSerializer):
 
-    set_password_form_class = SetPasswordForm
+    class Meta:
+        model = EmailVerificationCode
+        fields = ['uid', 'token']
+        read_only_fields = ['uid', 'token']
 
-    _errors = {}
-    user = None
-    set_password_form = None
-
-    def custom_validation(self, attrs):
-        pass
-
-    def validate(self, attrs):
-        from allauth.account.forms import default_token_generator
-        from allauth.account.utils import url_str_to_user_pk as uid_decoder
-        email_address = EmailVerificationCode.objects.get(code=attrs['key'])
-
-        attrs['uid'] = email_address.uid
-        attrs['token'] = email_address.token
-
-        try:
-            uid = force_str(uid_decoder(email_address.uid))
-            self.user = User._default_manager.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            raise ValidationError({'uid': [_('Invalid value')]})
-
-        if not default_token_generator.check_token(self.user, attrs['token']):
-            raise ValidationError({'token': [_('Invalid value')]})
-
-        self.custom_validation(attrs)
-
-        self.set_password_form = self.set_password_form_class(
-            user=self.user, data=attrs,
-        )
-        if not self.set_password_form.is_valid():
-            raise serializers.ValidationError(self.set_password_form.errors)
-
-        return attrs
-
-    def save(self):
-        return self.set_password_form.save()
+    def to_representation(self, instance):
+        if instance.is_expired:
+            raise ValidationError({"detail": "The verification code has expired."})
+        return super().to_representation(instance)

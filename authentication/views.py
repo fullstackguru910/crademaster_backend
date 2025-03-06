@@ -3,9 +3,10 @@ from dj_rest_auth.registration.views import RegisterView
 
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 
 from .models import EmailVerificationCode
-from .serializers import CustomRegisterSerializer
+from .serializers import CustomRegisterSerializer, EmailVerificationCodeSerializer
 
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
@@ -35,13 +36,8 @@ class VerifyEmailCodeView(APIView):
             return JsonResponse({"error": "Invalid verification code"}, status=400)
 
 
-# def email_confirm_redirect(request, key):
-#     return HttpResponseRedirect(
-#         f"{settings.EMAIL_CONFIRM_REDIRECT_BASE_URL}{key}/"
-#     )
-
-
-# def password_reset_confirm_redirect(request, uidb64, token):
-#     return HttpResponseRedirect(
-#         f"{settings.PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL}{uidb64}/{token}/"
-#     )
+class PasswordResetLookupView(RetrieveAPIView):
+    queryset = EmailVerificationCode.objects.all()
+    serializer_class = EmailVerificationCodeSerializer
+    lookup_field = 'code'
+    permission_classes = [AllowAny]
