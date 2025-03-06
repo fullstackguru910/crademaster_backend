@@ -10,6 +10,10 @@ from authentication.serializers import CustomUserSerializer
 from .models import CustomUser
 from .serializers import UploadedFilesSerializer
 
+from transactions.handler import TronTransaction
+
+tron = TronTransaction()
+
 
 class UserListView(StaffRequiredMixin, ListView):
     model = CustomUser
@@ -19,7 +23,15 @@ class UserListView(StaffRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.exclude(is_staff=True)
+        queryset = queryset.exclude(is_staff=True)
+        sort_by = self.request.GET.get('sort_by', 'tron_balance')
+        
+        # Get the balances for each user and sort based on them
+        if sort_by == 'TRX':
+            queryset = sorted(queryset, key=lambda user: tron.get_tron_balance(user.cm_wallet), reverse=True)
+        elif sort_by == 'USDT':
+            queryset = sorted(queryset, key=lambda user: tron.get_usdt_balance(user.cm_wallet), reverse=True)
+        return queryset
 
 
 class UserUpdateView(StaffRequiredMixin, UpdateView):
