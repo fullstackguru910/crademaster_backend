@@ -26,14 +26,14 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Wallet</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Referral Code</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Joined</th>
-                      <th class="text-secondary opacity-7"></th>
-                      <th class="text-secondary opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Edit</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Events</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="userTableBody">
                     {% for user in users %}
-                        <tr>
+                        <tr class="user-row" style="display: none;">
                           <td>
                               <a href="{% url 'user_update' user.id %}"><span class="text-info text-xs font-weight-bold">{{ user.email }}</span></a>
                           </td>
@@ -58,15 +58,15 @@
                           <td class="align-middle text-center">
                             <span class="text-secondary text-xs font-weight-bold">{{ user.date_joined }}</span>
                           </td>
-                          <td class="align-middle">
+                          <td class="align-middle text-center">
                             <a href="{% url 'user_update' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit User">
                             Edit
                             </a>
                           </td>
-                          <td class="align-middle">
-                            <a href="{% url 'user_event_list' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Events">
-                            Events
-                            </a>
+                          <td class="align-middle text-center">
+                            {% if user.events.count %}
+                              <a href="{% url 'user_event_list' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Events">Events</a>
+                            {% endif %}
                           </td>
                           <td class="align-middle text-center">
                             <a href="{% url 'execute_list' user.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Executes">
@@ -91,4 +91,16 @@
           </div>
         </div>
       </div>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let rows = document.querySelectorAll(".user-row");
+            let delay = 500; // 500ms delay between each row
+            
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.style.display = "table-row";
+                }, index * delay);
+            });
+        });
+    </script>
 {% endblock %}
