@@ -111,13 +111,16 @@
         
         document.addEventListener("DOMContentLoaded", async function () {
           const balanceElements = document.querySelectorAll(".tron-balance");
+          const delay = 1000;
       
-          balanceElements.forEach(async (element) => {
+          balanceElements.forEach((element, index) => {
+            setTimeout(async () => {
               const walletAddress = element.getAttribute("data-wallet");
               if (walletAddress) {
-                  const balance = await getTronBalance(walletAddress);
-                  element.textContent = `${balance} TRX`;
+                const balance = await getTronBalance(walletAddress);
+                element.textContent = `${balance} TRX`;
               }
+            }, index * delay);
           });
         });
       </script>
