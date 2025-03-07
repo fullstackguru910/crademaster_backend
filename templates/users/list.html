@@ -31,17 +31,17 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
                     </tr>
                   </thead>
-                  <tbody id="userTableBody">
+                  <tbody>
                     {% for user in users %}
-                        <tr class="user-row" style="display: none;">
+                        <tr>
                           <td>
                               <a href="{% url 'user_update' user.id %}"><span class="text-info text-xs font-weight-bold">{{ user.email }}</span></a>
                           </td>
                           <td class="align-middle text-center text-sm">
-                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_usdt_balance }}</span>
+                            <span class="text-secondary text-xs font-weight-bold usdt-balance" data-wallet="{{ user.cm_wallet }}"></span>
                           </td>
                           <td class="align-middle text-center text-sm">
-                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_tron_balance }}</span>
+                            <span class="text-secondary text-xs font-weight-bold tron-balance" data-wallet="{{ user.cm_wallet }}"></span>
                           </td>
                           <td class="align-middle text-center text-sm">
                             <span class="text-secondary text-xs font-weight-bold">{{ user.profit_percent }} %</span>
@@ -92,15 +92,33 @@
         </div>
       </div>
       <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let rows = document.querySelectorAll(".user-row");
-            let delay = 500; // 500ms delay between each row
-            
-            rows.forEach((row, index) => {
-                setTimeout(() => {
-                    row.style.display = "table-row";
-                }, index * delay);
-            });
+        async function getTronBalance(walletAddress) {
+          const apiUrl = `https://api.trongrid.io/v1/accounts/${walletAddress}`;
+      
+          try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            if (data.data && data.data.length > 0) {
+              const balanceInSun = data.data[0].balance || 0;
+              return (balanceInSun / 1_000_000).toFixed(2);
+            }
+          } catch (error) {
+            console.error("Error fetching balance:", error);
+          }
+          return "0.00";
+        }
+        
+        document.addEventListener("DOMContentLoaded", async function () {
+          const balanceElements = document.querySelectorAll(".tron-balance");
+      
+          balanceElements.forEach(async (element) => {
+              const walletAddress = element.getAttribute("data-wallet");
+              if (walletAddress) {
+                  const balance = await getTronBalance(walletAddress);
+                  element.textContent = `${balance} TRX`;
+              }
+          });
         });
-    </script>
+      </script>
 {% endblock %}

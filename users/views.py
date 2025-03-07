@@ -15,7 +15,6 @@ class UserListView(StaffRequiredMixin, ListView):
     model = CustomUser
     template_name = 'users/list.html'
     context_object_name = 'users'
-    # paginate_by = 5
 
     def get_queryset(self):
         queryset = super().get_queryset()
