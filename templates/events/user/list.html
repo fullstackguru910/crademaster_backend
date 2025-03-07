@@ -1,0 +1,54 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}
+    Crademaster events
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header pb-0">
+              <h6>Events for <span class="text-info">{{ user }}</span></h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">EVENT NAME</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">EVENT AMOUNT</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Is Active</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td class="align-middle text-sm">
+                                <span class="text-secondary text-xs font-weight-bold">{{ event.name }}</span>
+                            </td>
+                            <td class="align-middle text-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{ event.amount }} USDT</span>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ event.is_active }}</span>
+                            </td>
+                            <td class="align-middle">
+                                <form method="post" action="{% url 'remove_user_from_event' event_id=event.pk user_id=user.id %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn bg-gradient-danger w-50 mb-0 mt-0">Remove User from Event</button>
+                              </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
