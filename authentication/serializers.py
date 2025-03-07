@@ -126,6 +126,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     usdt_balance = serializers.SerializerMethodField()
     tron_balance = serializers.SerializerMethodField()
     total_balance = serializers.SerializerMethodField()
+    event_balance = serializers.SerializerMethodField()
     total_profits = serializers.SerializerMethodField()
     availability = serializers.SerializerMethodField()
     total_deposits = serializers.SerializerMethodField()
@@ -150,6 +151,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'usdt_balance',
             'tron_balance',
             'total_balance',
+            'event_balance',
             'total_profits',
             'executes',
             'events',
@@ -166,6 +168,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
     
     def get_usdt_balance(self, obj):
         return obj.get_usdt_balance
+    
+    def get_event_balance(self, obj):
+        return obj.get_event_balance
     
     def get_total_deposits(self, obj):
         return obj.get_deposit_balance

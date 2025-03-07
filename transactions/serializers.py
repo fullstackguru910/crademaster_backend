@@ -43,7 +43,7 @@ class WithdrawSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("The minimum withdrawal amount should be 1 USDT.")
 
         if data['address'] == user.cm_wallet:
-            raise serializers.ValidationError("Withdrawal address shouldn't be the crademaster wallet.")\
+            raise serializers.ValidationError("Withdrawal address shouldn't be the crademaster wallet.")
             
         if user.get_tron_balance < settings.MINIMUM_TRON_AMOUNT:
             raise serializers.ValidationError(f"Your Tron balance is insufficient. Please ensure your balance is greater than {settings.MINIMUM_TRON_AMOUNT} TRX to proceed.")

@@ -52,6 +52,10 @@ class CustomUser(AbstractUser):
         for execute in executes:
             total_profits += execute.get_profit()
         return round(float(total_profits), 2)
+    
+    @property
+    def get_event_balance(self):
+        return self.events.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
     @property
     def get_deposit_balance(self):
@@ -62,7 +66,7 @@ class CustomUser(AbstractUser):
 
         total_amount = total_deposit['total_deposit_amount'] or 0
         usdt_balance = self.get_usdt_balance
-        event = self.events.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+        event = self.get_event_balance
         return float(total_amount) + float(usdt_balance) - float(self.get_withdrawal_balance) + float(event)
 
     @property
