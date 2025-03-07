@@ -61,6 +61,5 @@ class RemoveUserFromEventView(View):
             return HttpResponseForbidden("User is not part of the event")
 
         event.users.remove(user)
-        
-        # Redirect or return a response
+
         return redirect('user_list')

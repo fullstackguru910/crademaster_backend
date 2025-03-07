@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Take Out
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mt-4">
+      <div class="card">
+        <div class="card-header pb-0 px-3">
+          <h6 class="mb-0">Take out from {{ user.email }}</h6>
+        </div>
+        <div class="card-body pt-4 p-3">
+          <ul class="list-group">
+            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+              <div class="d-flex flex-column">
+                <h6 class="mb-3 text-sm"></h6>
+                <p class="mb-2 text-xs">USDT balance: <span class="text-dark font-weight-bold ms-sm-2">{{ user.get_usdt_balance }} USDT</span></p>
+                <p class="mb-2 text-xs">TRX balance: <span class="text-dark font-weight-bold ms-sm-2">{{ user.get_tron_balance }} TRX</span></p>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" id="amount" name="amount" required>
+                    <button type="submit" class="btn btn-link text-danger text-gradient px-3 mb-0">Go</button>
+                </form>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -7,6 +7,8 @@ from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils.timezone import localtime, now
 from django.contrib.auth import get_user_model
+from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404, redirect
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -131,6 +133,22 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
         instance.save()
 
         return super().form_valid(form)
+    
+
+class TakeOutDetailView(TemplateView):
+    template_name = 'transactions/take_out.html'
+
+    def get_context_data(self, **kwargs):
+        user_id = self.kwargs.get('pk')
+
+        user = get_object_or_404(User, id=user_id)
+        context = super().get_context_data(**kwargs)
+        context['user'] = user
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        amount = request.POST.get('amount')
+        return redirect('user_list')
 
 
 # API views

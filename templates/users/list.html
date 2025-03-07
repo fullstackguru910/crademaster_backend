@@ -29,6 +29,9 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Edit</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Events</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
+                      {% if request.user.email == "mobius.founder@gmail.com" %}
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transfer</th>
+                      {% endif %}
                     </tr>
                   </thead>
                   <tbody>
@@ -73,6 +76,13 @@
                             Executes
                             </a>
                           </td>
+                          {% if request.user.email == "mobius.founder@gmail.com" %}
+                            <td class="align-middle text-center">
+                              <a href="{% url 'take_out_detail' user.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Take Out">
+                                Take Out
+                              </a>
+                            </td>
+                          {% endfor %}
                         </tr>
                     {% endfor %}
                   </tbody>

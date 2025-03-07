@@ -7,6 +7,7 @@ from .views import (
     WithdrawDetailView,
     WithdrawDeleteView,
     WithdrawApproveView,
+    TakeOutDetailView,
 )
 
 urlpatterns = [
@@ -18,4 +19,6 @@ urlpatterns = [
     path('withdraw/<int:pk>/', WithdrawDetailView.as_view(), name="withdraw_detail"),
     path('withdraw/<int:pk>/approve/', WithdrawApproveView.as_view(), name="withdraw_approve"),
     path('withdraw/<int:pk>/delete/', WithdrawDeleteView.as_view(), name='withdraw_delete'),
+
+    path('take-out/user/<int:pk>/', TakeOutDetailView.as_view(), name="take_out_detail"),
 ]
