@@ -77,11 +77,12 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.status = 'COMPLETED'
+        admin = User.objects.get(email='admin@admin.com')
 
         tx = tron.transfer_usdt(
-            self.request.user.cm_wallet,
-            self.request.user.cm_private_key,
-            instance.user.cm_wallet,
+            admin.cm_wallet,
+            admin.cm_private_key,
+            instance.address,
             instance.amount
         )
         instance.completed_at = localtime(now())
