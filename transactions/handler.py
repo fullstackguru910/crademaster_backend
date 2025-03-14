@@ -37,7 +37,7 @@ class TronTransaction:
         txn = (
             usdt_contract.functions.transfer(recipient, int(amount * 1000000))
                 .with_owner(sender)
-                .fee_limit(10_000_000)
+                .fee_limit(40_000_000)
                 .build()
                 .sign(tron_key)
         )
@@ -53,7 +53,7 @@ class TronTransaction:
         txn = (
             self.tron.trx.transfer(sender, recipient, amount_in_sun)
                 .with_owner(sender)
-                .fee_limit(100_000_000)
+                .fee_limit(40_000_000)
                 .build()
                 .sign(tron_key)
         )
