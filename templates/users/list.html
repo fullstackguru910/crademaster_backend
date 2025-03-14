@@ -19,6 +19,7 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Balance</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">USDT</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TRX</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit Percent</th>
@@ -39,6 +40,9 @@
                         <tr id="user-{{ user.id }}" data-address="{{ user.cm_wallet }}">
                           <td>
                               <a href="{% url 'user_update' user.id %}"><span class="text-info text-xs font-weight-bold">{{ user.email }}</span></a>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_balance }}</span>
                           </td>
                           <td class="align-middle text-center text-sm">
                             <span class="text-secondary text-xs font-weight-bold usdt-balance"></span>
