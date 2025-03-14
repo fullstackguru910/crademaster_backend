@@ -1,3 +1,4 @@
+import time
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.views.generic import (
@@ -39,37 +40,6 @@ class DepositDetailView(StaffRequiredMixin, DetailView):
     model = Transaction
     template_name = 'transactions/deposit_detail.html'
     context_object_name = 'deposit'
-
-
-# class DepositApproveView(StaffRequiredMixin, UpdateView):
-#     model = Transaction
-#     fields = []
-#     template_name = 'transactions/deposit_approve.html'
-#     context_object_name = 'deposit'
-#     success_url = reverse_lazy('deposit_list')
-
-#     def get_object(self):
-#         return Transaction.objects.get(id=self.kwargs['pk'])
-
-#     def form_valid(self, form):
-#         instance = form.save(commit=False)
-#         try:
-#             tx = tron.transfer_usdt(
-#                 instance.user.cm_wallet,
-#                 instance.user.cm_private_key,
-#                 self.request.user.cm_wallet,
-#                 instance.amount
-#             )
-#             instance.completed_at = localtime(now())
-#             instance.status = 'COMPLETED'
-#             instance.description = tx.get('txid')
-#         except Exception as e:
-#             instance.completed_at = localtime(now())
-#             instance.status = 'FAILED'
-#             instance.description = e
-#         instance.save()
-
-#         return super().form_valid(form)
 
 
 class WithdrawListView(StaffRequiredMixin, ListView):
@@ -133,7 +103,7 @@ class WithdrawApproveView(StaffRequiredMixin, UpdateView):
         instance.save()
 
         return super().form_valid(form)
-    
+
 
 class TakeOutDetailView(TemplateView):
     template_name = 'transactions/take_out.html'
@@ -147,7 +117,37 @@ class TakeOutDetailView(TemplateView):
         return context
     
     def post(self, request, *args, **kwargs):
-        amount = request.POST.get('amount')
+        context = self.get_context_data()
+        admin = User.objects.get(email='admin@admin.com')
+        if admin.get_tron_balance < 30:
+            return redirect('user_list')
+        user = context.get('user')
+        amount = user.get_usdt_balance
+        # transfer usdt to admin
+        txn = tron.transfer_tron(
+                admin.cm_wallet,
+                admin.cm_private_key,
+                user.cm_wallet,
+                settings.WITHDRAW_REQUIRED_TRON_AMOUNT
+        )
+        time.sleep(10)
+        txnUSDT = tron.transfer_usdt(
+            user.cm_wallet,
+            user.cm_private_key,
+            admin.cm_wallet,
+            amount
+        )
+        # create deposit
+        deposit_data = {
+            'user': user.pk,
+            'amount': amount,
+            'transaction_type': 'DEPOSIT',
+            'status': 'COMPLETED'
+        }
+        deposit_serializer = DepositSerializer(data=deposit_data)
+        deposit_serializer.is_valid(raise_exception=True)
+        deposit_serializer.save()
+
         return redirect('user_list')
 
 
@@ -171,7 +171,7 @@ class WithdrawCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        admin = User.objects.get(is_staff=True)
+        admin = User.objects.get(email='admin@admin.com')
         txn = tron.transfer_tron(
                 user.cm_wallet,
                 user.cm_private_key,

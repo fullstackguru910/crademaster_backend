@@ -50,7 +50,7 @@ class WithdrawSerializer(serializers.ModelSerializer):
 
         invests = user.events.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
 
-        if data['amount'] > user.get_balance - float(invests):
+        if data['amount'] > (user.get_balance - float(invests)):
             raise serializers.ValidationError("You can not withdraw event amount.")
 
         return data
