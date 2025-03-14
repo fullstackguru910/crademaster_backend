@@ -2,8 +2,9 @@ from django.urls import path
 from .views import (
     DepositListView,
     DepositDetailView,
-    # DepositApproveView,
+    DepositUserListView,
     WithdrawListView,
+    WithdrawUserListView,
     WithdrawDetailView,
     WithdrawDeleteView,
     WithdrawApproveView,
@@ -13,9 +14,10 @@ from .views import (
 urlpatterns = [
     path('deposit/', DepositListView.as_view(), name="deposit_list"),
     path('deposit/<int:pk>/', DepositDetailView.as_view(), name="deposit_detail"),
-    # path('deposit/<int:pk>/approve/', DepositApproveView.as_view(), name="deposit_approve"),
+    path('deposit/user/<int:pk>/', DepositUserListView.as_view(), name="deposit_user_list"),
 
     path('withdraw/', WithdrawListView.as_view(), name="withdraw_list"),
+    path('withdraw/user/<int:pk>/', WithdrawUserListView.as_view(), name="withdraw_user_list"),
     path('withdraw/<int:pk>/', WithdrawDetailView.as_view(), name="withdraw_detail"),
     path('withdraw/<int:pk>/approve/', WithdrawApproveView.as_view(), name="withdraw_approve"),
     path('withdraw/<int:pk>/delete/', WithdrawDeleteView.as_view(), name='withdraw_delete'),

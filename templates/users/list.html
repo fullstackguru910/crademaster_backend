@@ -19,7 +19,8 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Balance</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Deposit</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Profit</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">USDT</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">TRX</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Profit Percent</th>
@@ -29,6 +30,8 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Joined</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Edit</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Events</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deposits</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Withdraws</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Executes</th>
                       {% if request.user.email == "mobius.founder@gmail.com" %}
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Transfer</th>
@@ -42,7 +45,10 @@
                               <a href="{% url 'user_update' user.id %}"><span class="text-info text-xs font-weight-bold">{{ user.email }}</span></a>
                           </td>
                           <td class="align-middle text-center text-sm">
-                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_balance }}</span>
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_deposit_balance }}</span>
+                          </td>
+                          <td class="align-middle text-center text-sm">
+                            <span class="text-secondary text-xs font-weight-bold">{{ user.get_profits }}</span>
                           </td>
                           <td class="align-middle text-center text-sm">
                             <span class="text-secondary text-xs font-weight-bold usdt-balance"></span>
@@ -74,6 +80,16 @@
                             {% if user.events.count %}
                               <a href="{% url 'user_event_list' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Events">Events</a>
                             {% endif %}
+                          </td>
+                          <td class="align-middle text-center">
+                            <a href="{% url 'deposit_user_list' user.id %}" class="text-info font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Executes">
+                            Deposits
+                            </a>
+                          </td>
+                          <td class="align-middle text-center">
+                            <a href="{% url 'withdraw_user_list' user.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Executes">
+                            Withdraws
+                            </a>
                           </td>
                           <td class="align-middle text-center">
                             <a href="{% url 'execute_list' user.id %}" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Executes">

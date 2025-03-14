@@ -18,8 +18,8 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deposit</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Amount</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">USDT</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Address</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Requested At</th>
@@ -35,10 +35,10 @@
                                 <a href="{% url 'withdraw_detail' withdraw.id %}"><span class="text-info text-xs font-weight-bold">{{ withdraw.user }}</span></a>
                             </td>
                             <td class="align-middle text-center text-sm">
-                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.user.get_usdt_balance }} USDT</span>
+                              <span class="text-secondary text-xs font-weight-bold">{{ withdraw.amount }} USDT</span>
                             </td>
                             <td class="align-middle text-center text-sm">
-                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.amount }} USDT</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{ withdraw.user.get_usdt_balance }} USDT</span>
                             </td>
                             <td class="align-middle text-center">
                               <span class="text-secondary text-xs font-weight-bold">{{ withdraw.address }}</span>

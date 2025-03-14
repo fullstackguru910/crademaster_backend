@@ -34,12 +34,22 @@ class DepositListView(StaffRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(transaction_type='DEPOSIT')
-    
+
 
 class DepositDetailView(StaffRequiredMixin, DetailView):
     model = Transaction
     template_name = 'transactions/deposit_detail.html'
     context_object_name = 'deposit'
+
+
+class DepositUserListView(StaffRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'transactions/deposit_list.html'
+    context_object_name = 'deposits'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(transaction_type='DEPOSIT', user__pk=self.kwargs.get("pk"))
 
 
 class WithdrawListView(StaffRequiredMixin, ListView):
@@ -50,6 +60,16 @@ class WithdrawListView(StaffRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(transaction_type='WITHDRAWAL')
+    
+
+class WithdrawUserListView(StaffRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'transactions/withdraw_list.html'
+    context_object_name = 'withdraws'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(transaction_type='WITHDRAWAL', user__pk=self.kwargs.get("pk"))
 
 
 class WithdrawDetailView(StaffRequiredMixin, DetailView):
