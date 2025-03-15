@@ -151,7 +151,7 @@
                 </g>
               </svg>
             </div>
-            <span class="nav-link-text ms-1">Withdraw Requests</span>
+            <span class="nav-link-text ms-1">Withdraw Requests</span>{% if withdrawals %}&nbsp;<span class="circle">{{ withdrawals.count }}</span>{% endif %}
           </a>
         </li>
       </ul>

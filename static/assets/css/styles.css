@@ -19,3 +19,17 @@
     background-color: #ddd;
     border-radius: 5px;
 }
+
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+}
