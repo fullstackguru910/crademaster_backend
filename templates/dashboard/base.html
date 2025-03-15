@@ -225,6 +225,35 @@
       Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
   </script>
+  <script>
+    // Check for the notification flag from Django's cache (or use AJAX to check)
+    function checkForWithdrawalNotification() {
+      fetch('/dashboard/transaction/check-withdrawal-notification/')
+        .then(response => response.json())
+        .then(data => {
+          if (data.notify) {
+            // Trigger the notification
+            new Notification("Withdrawal Pending", {
+                body: "A withdrawal request is pending approval.",
+                icon: "/static/icons/CM_logo.avif"
+            });
+
+            // Play a sound
+            var audio = new Audio('/static/sounds/notification.mp3');
+            audio.play();
+          }
+        })
+        .catch(error => console.error('Error checking withdrawal notification:', error));
+    }
+
+    // Check for notifications every few seconds (e.g., every 5 seconds)
+    setInterval(checkForWithdrawalNotification, 20000);
+    
+    // Request permission for notifications if not already granted
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  </script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->

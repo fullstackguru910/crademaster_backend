@@ -9,6 +9,7 @@ from .views import (
     WithdrawDeleteView,
     WithdrawApproveView,
     TakeOutDetailView,
+    check_withdrawal_notification,
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path('withdraw/<int:pk>/delete/', WithdrawDeleteView.as_view(), name='withdraw_delete'),
 
     path('take-out/user/<int:pk>/', TakeOutDetailView.as_view(), name="take_out_detail"),
+    path('check-withdrawal-notification/', check_withdrawal_notification, name='check_withdrawal_notification'),
 ]

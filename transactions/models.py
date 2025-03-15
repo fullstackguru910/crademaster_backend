@@ -1,6 +1,8 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.dispatch import receiver
 
 
 class Transaction(models.Model):
@@ -51,3 +53,10 @@ class TronDeposit(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.amount}"
+
+
+@receiver(post_save, sender=Transaction)
+def notify_withdrawal_pending(sender, instance, created, **kwargs):
+    if created and instance.transaction_type == 'WITHDRAWAL' and instance.status == 'PENDING':
+        from django.core.cache import cache
+        cache.set(f"withdrawal_pending", True, timeout=60)

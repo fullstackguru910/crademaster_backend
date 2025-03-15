@@ -4,6 +4,8 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.views.generic import (
     ListView, DetailView, DeleteView, UpdateView
 )
+from django.http import JsonResponse
+from django.core.cache import cache
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils.timezone import localtime, now
@@ -170,6 +172,14 @@ class TakeOutDetailView(TemplateView):
         deposit_serializer.save()
 
         return redirect('user_list')
+
+
+def check_withdrawal_notification(request):
+    cache.set(f"withdrawal_pending", True, timeout=60)
+    notify = cache.get(f"withdrawal_pending", False)
+    if notify:
+        cache.delete(f"withdrawal_pending")
+    return JsonResponse({'notify': notify})
 
 
 # API views
