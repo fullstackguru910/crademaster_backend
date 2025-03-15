@@ -175,7 +175,6 @@ class TakeOutDetailView(TemplateView):
 
 
 def check_withdrawal_notification(request):
-    cache.set(f"withdrawal_pending", True, timeout=60)
     notify = cache.get(f"withdrawal_pending", False)
     if notify:
         cache.delete(f"withdrawal_pending")
